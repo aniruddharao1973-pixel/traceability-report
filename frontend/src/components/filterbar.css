@@ -1,0 +1,48 @@
+/* src/components/filterbar.css */
+
+/* base modern input reset */
+.modern-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-shadow: none;
+  outline: none;
+}
+
+/* remove any inner focus line on webkit date/time inputs */
+.modern-input::-webkit-datetime-edit, 
+.modern-input::-webkit-inner-spin-button,
+.modern-input::-webkit-clear-button,
+.modern-input::-webkit-inner-spin-button,
+.modern-input::-webkit-calendar-picker-indicator {
+  display: inline-block; /* keep indicator but avoid extra decoration */
+  -webkit-appearance: none;
+}
+
+/* ensure the picker indicators are visible but not duplicated */
+.modern-input::-webkit-calendar-picker-indicator {
+  opacity: 0.95;
+  filter: none !important;
+  margin-right: 4px;
+}
+
+/* placeholder color — works for text-like date inputs in many browsers */
+.modern-input::placeholder {
+  color: rgba(255,255,255,0.45); /* will be overridden by inline color in light mode, ok for dark mode */
+}
+
+/* brighten the calendar/time text so the selected value is readable */
+.modern-input::-webkit-datetime-edit-year-field,
+.modern-input::-webkit-datetime-edit-month-field,
+.modern-input::-webkit-datetime-edit-day-field,
+.modern-input::-webkit-datetime-edit-hour-field,
+.modern-input::-webkit-datetime-edit-minute-field,
+.modern-input::-webkit-datetime-edit-second-field {
+  color: inherit; /* inherit from inline style color so dark-mode shows correctly */
+}
+
+/* focus state (soft glow) */
+.modern-input:focus {
+  box-shadow: 0 0 0 3px rgba(79, 153, 255, 0.08);
+  border-color: rgba(79,153,255,0.6);
+}

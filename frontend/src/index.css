@@ -1,0 +1,200 @@
+/* PLEASE NOTE: THESE TAILWIND IMPORTS SHOULD NEVER BE DELETED */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+/* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
+
+/* Animation Keyframes for Traceability Report Loading Spinner */
+
+@keyframes flowData {
+  0% {
+    left: -8%;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  5% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  95% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    left: 108%;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes verticalScan {
+  0%, 100% {
+    top: 0;
+    opacity: 0.3;
+  }
+  50% {
+    top: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes horizontalScan {
+  0%, 100% {
+    left: 0;
+    opacity: 0.3;
+  }
+  50% {
+    left: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes pulseSegment {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes barPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scaleY(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1.2);
+  }
+}
+
+@keyframes progressRing {
+  0% {
+    stroke-dashoffset: 88;
+  }
+  50% {
+    stroke-dashoffset: 22;
+  }
+  100% {
+    stroke-dashoffset: 88;
+  }
+}
+
+/* Loading Animation Keyframes for Table Search */
+@keyframes bounce {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+/* Enhanced Spinner Animations */
+@keyframes spin-slow {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg); 
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+/* Pulse animation for text */
+@keyframes pulse-soft {
+  0%, 100% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.7; 
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+
+
+/* New Loader Animations */
+@keyframes fillRow {
+  0%, 100% { 
+    opacity: 0.3; 
+  }
+  50% { 
+    opacity: 1; 
+  }
+}
+
+.animate-fillRow {
+  animation: fillRow 2s ease-in-out infinite;
+}
+
+@keyframes progressFill {
+  0% { 
+    width: 0%; 
+  }
+  50% { 
+    width: 100%; 
+  }
+  100% { 
+    width: 0%; 
+  }
+}
+
+.animate-progressFill {
+  animation: progressFill 2s ease-in-out infinite;
+}
+
+@keyframes slideProgress {
+  0% { 
+    transform: translateX(-100%); 
+  }
+  100% { 
+    transform: translateX(100%); 
+  }
+}
+
+.animate-slideProgress {
+  animation: slideProgress 2s ease-in-out infinite;
+}
+
+
+
+/* data analytics dashboard animations */
+
