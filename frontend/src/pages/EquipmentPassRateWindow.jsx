@@ -1,23 +1,22 @@
-import React from 'react';
-import EquipmentPassRateReport from '../components/EquipmentPassRateReport';
+// src/windows/EquipmentPassRateWindow.jsx
+import React from "react";
+import EquipmentPassRateReport from "../components/EquipmentPassRateReport";
 
 export default function EquipmentPassRateWindow() {
   const params = new URLSearchParams(window.location.search);
-  const uid = params.get('uid') || '';
-  
-  // ✅ Read date parameters
-  const includeDateInReport = params.get('includeDateInReport') === 'true';
-  const userSelectedFromDate = params.get('userSelectedFromDate') || '';
-  const userSelectedToDate = params.get('userSelectedToDate') || '';
-  const userSelectedFromTime = params.get('userSelectedFromTime') || '00:00:00';
-  const userSelectedToTime = params.get('userSelectedToTime') || '23:59:59';
+  const uid = params.get("uid") || "";
+
+  const includeDateInReport = params.get("includeDateInReport") === "true";
+  const userSelectedFromDate = params.get("userSelectedFromDate") || "";
+  const userSelectedToDate = params.get("userSelectedToDate") || "";
+  const userSelectedFromTime = params.get("userSelectedFromTime") || "00:00:00";
+  const userSelectedToTime = params.get("userSelectedToTime") || "23:59:59";
 
   return (
-    <div style={{ padding: 12, background: '#FAFAF5', minHeight: '100vh' }}>
-      <EquipmentPassRateReport 
-        embedded   
-        uidFromParent={uid} 
-        // ✅ Pass date parameters
+    <div style={{ padding: 12, background: "#FAFAF5", minHeight: "100vh" }}>
+      <EquipmentPassRateReport
+        embedded
+        uidFromParent={uid}
         includeDateInReport={includeDateInReport}
         userSelectedFromDate={userSelectedFromDate}
         userSelectedToDate={userSelectedToDate}

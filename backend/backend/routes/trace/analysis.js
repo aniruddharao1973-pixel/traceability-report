@@ -1,11 +1,6 @@
-
-
-
 /**
  * analysis.js - INDUSTRY 4.0 WITH ALL FUNCTIONS IMPLEMENTED
  */
-
-
 
 /**
  * analysis.js - INDUSTRY 4.0 WITH ALL FUNCTIONS IMPLEMENTED
@@ -47,27 +42,27 @@
 //        1️⃣  BASIC PRODUCT INFORMATION
 //     ------------------------------------------------------------------*/
 //     // const lifecycleRows = await runQuery(
-//     //   `SELECT uid, productid, productmodelname, productvariant, shift, 
-//     //           productionstartdate, productionenddate, productstatus, 
+//     //   `SELECT uid, productid, productmodelname, productvariant, shift,
+//     //           productionstartdate, productionenddate, productstatus,
 //     //           reworkcount, cycletime, productionremarks
 //     //    FROM public.productionlifecycle
 //     //    WHERE uid = $1 LIMIT 1`, [uid]
 //     // );
 
 //       const lifecycleRows = await runQuery(
-//         `SELECT uid, productid, productmodelname, productvariant, shift, 
-//                 productionstartdate, productionenddate, productstatus, 
+//         `SELECT uid, productid, productmodelname, productvariant, shift,
+//                 productionstartdate, productionenddate, productstatus,
 //                 reworkcount, cycletime, productionremarks
 //         FROM public.productionlifecycle
-//         WHERE uid = $1 
+//         WHERE uid = $1
 //         ORDER BY productionenddate
 //         LIMIT 1`, [uid]
 //       );
 
 //     if (lifecycleRows.length === 0) {
-//       return res.status(404).json({ 
-//         success: false, 
-//         message: "UID not found in production data" 
+//       return res.status(404).json({
+//         success: false,
+//         message: "UID not found in production data"
 //       });
 //     }
 
@@ -77,44 +72,43 @@
 //        2️⃣  SEQUENTIAL STATION TESTING DATA
 //     ------------------------------------------------------------------*/
 //       // const stationTests = await runQuery(
-//       //   `SELECT 
-//       //       pl.equipmentid, 
-//       //       e.equipmentname, 
+//       //   `SELECT
+//       //       pl.equipmentid,
+//       //       e.equipmentname,
 //       //       e.equipmentsequence,
-//       //       pl.productstatus as teststatus, 
+//       //       pl.productstatus as teststatus,
 //       //       NULL as value, NULL as unit, NULL as lsl, NULL as hsl,
-//       //       pl.productionstartdate as productiondate, 
-//       //       pl.productionremarks as remark, 
+//       //       pl.productionstartdate as productiondate,
+//       //       pl.productionremarks as remark,
 //       //       pl.reworkcount,
 //       //       ROW_NUMBER() OVER () as row_id
 //       //   FROM public.productionlifecycle pl
 //       //   LEFT JOIN (
-//       //       SELECT DISTINCT ON (equipmentid) 
+//       //       SELECT DISTINCT ON (equipmentid)
 //       //           equipmentid, equipmentname, equipmentsequence
-//       //       FROM public.equipments 
+//       //       FROM public.equipments
 //       //       ORDER BY equipmentid, equipmentsequence
 //       //   ) e ON pl.equipmentid = e.equipmentid
 //       //   WHERE pl.uid = $1
 //       //   ORDER BY pl.productionstartdate`, [uid]
 //       // );
 
-
 //             const stationTests = await runQuery(
-//       `SELECT 
-//           pl.equipmentid, 
-//           e.equipmentname, 
+//       `SELECT
+//           pl.equipmentid,
+//           e.equipmentname,
 //           e.equipmentsequence,
-//           pl.productstatus as teststatus, 
+//           pl.productstatus as teststatus,
 //           NULL as value, NULL as unit, NULL as lsl, NULL as hsl,
-//           pl.productionstartdate as productiondate, 
-//           pl.productionremarks as remark, 
+//           pl.productionstartdate as productiondate,
+//           pl.productionremarks as remark,
 //           pl.reworkcount,
 //           ROW_NUMBER() OVER () as row_id
 //       FROM public.productionlifecycle pl
 //       LEFT JOIN (
-//           SELECT DISTINCT ON (equipmentid) 
+//           SELECT DISTINCT ON (equipmentid)
 //               equipmentid, equipmentname, equipmentsequence
-//           FROM public.equipments 
+//           FROM public.equipments
 //           ORDER BY equipmentid, equipmentsequence
 //       ) e ON pl.equipmentid = e.equipmentid
 //       WHERE pl.uid = $1
@@ -125,8 +119,8 @@
 //     ------------------------------------------------------------------*/
 //     const reworkHistory = await runQuery(
 //       `SELECT reworkdatetime, equipmentname, description, defectcode
-//        FROM public.reworkdata 
-//        WHERE uid = $1 
+//        FROM public.reworkdata
+//        WHERE uid = $1
 //        ORDER BY reworkdatetime`, [uid]
 //     );
 
@@ -141,7 +135,7 @@
 //     const analysisData = {
 //       success: true,
 //       uid,
-      
+
 //       // Basic Product Info
 //       product_info: {
 //         product_id: lifecycle.productid,
@@ -197,10 +191,10 @@
 
 //   } catch (error) {
 //     console.error("Error in Industry 4.0 analysis:", error);
-//     res.status(500).json({ 
-//       success: false, 
-//       message: "Server error in analysis", 
-//       error: error.message 
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error in analysis",
+//       error: error.message
 //     });
 //   }
 // });
@@ -304,12 +298,12 @@
 //       issue: station.teststatus === 'FAIL' ? 'Test Failure' : 'Rework Required',
 //       sequence: station.equipmentsequence
 //     }));
-  
+
 //   return {
 //     bottleneck_stations: bottlenecks,
 //     severity: bottlenecks.length > 2 ? "HIGH" : bottlenecks.length > 0 ? "MEDIUM" : "LOW",
-//     recommendation: bottlenecks.length > 0 ? 
-//       `Focus on stations: ${bottlenecks.map(b => b.station).join(', ')}` : 
+//     recommendation: bottlenecks.length > 0 ?
+//       `Focus on stations: ${bottlenecks.map(b => b.station).join(', ')}` :
 //       "No significant bottlenecks"
 //   };
 // }
@@ -377,21 +371,21 @@
 //   let priority = "LOW";
 //   if (healthScore < 70) priority = "HIGH";
 //   else if (healthScore < 85) priority = "MEDIUM";
-  
+
 //   return {
 //     priority: priority,
 //     health_score: `${healthScore}%`,
-//     recommended_action: priority === "HIGH" ? "Schedule immediate maintenance" : 
-//                        priority === "MEDIUM" ? "Plan maintenance within 2 weeks" : 
+//     recommended_action: priority === "HIGH" ? "Schedule immediate maintenance" :
+//                        priority === "MEDIUM" ? "Plan maintenance within 2 weeks" :
 //                        "Routine monitoring sufficient"
 //   };
 // }
 
 // function performRiskAssessment(stationTests) {
-//   const criticalStations = stationTests.filter(s => 
+//   const criticalStations = stationTests.filter(s =>
 //     s.teststatus === 'FAIL' && s.equipmentsequence <= 3
 //   );
-  
+
 //   return {
 //     risk_level: criticalStations.length > 0 ? "MEDIUM" : "LOW",
 //     critical_issues: criticalStations.length,
@@ -444,11 +438,11 @@
 //   const hasTestData = stationTests.length > 0;
 //   const hasMultipleStations = stationTests.length > 1;
 //   const hasQualityData = stationTests.filter(s => s.teststatus && s.value).length > 0;
-  
+
 //   let readiness = "LOW";
 //   if (hasTestData && hasMultipleStations && hasQualityData) readiness = "HIGH";
 //   else if (hasTestData && hasMultipleStations) readiness = "MEDIUM";
-  
+
 //   return {
 //     readiness_level: readiness,
 //     capabilities: {
@@ -461,7 +455,7 @@
 
 // function generateBasicInsights(stationTests, reworkHistory) {
 //   const insights = [];
-  
+
 //   // Insight 1: First Pass Yield
 //   const fpy = calculateFirstPassYield(stationTests);
 //   if (fpy < 90) {
@@ -472,7 +466,7 @@
 //       suggestion: "Review test parameters at failing stations"
 //     });
 //   }
-  
+
 //   // Insight 2: Bottleneck detection
 //   const bottlenecks = findBottleneckStations(stationTests);
 //   if (bottlenecks.severity !== "LOW") {
@@ -483,7 +477,7 @@
 //       suggestion: "Optimize station sequences and parameters"
 //     });
 //   }
-  
+
 //   // Insight 3: Maintenance needs
 //   const maintenance = assessMaintenancePriority(stationTests);
 //   if (maintenance.priority === "HIGH") {
@@ -494,7 +488,7 @@
 //       suggestion: maintenance.recommended_action
 //     });
 //   }
-  
+
 //   return insights.length > 0 ? insights : [{
 //     type: "POSITIVE",
 //     message: "All systems operating within optimal parameters",
@@ -506,10 +500,10 @@
 // // Basic Helper Functions
 // function getCurrentStation(stationTests) {
 //   if (stationTests.length === 0) return null;
-  
+
 //   const lastTest = stationTests[stationTests.length - 1];
 //   const allPassed = stationTests.every(s => s.teststatus === 'PASS');
-  
+
 //   return {
 //     station: lastTest.equipmentname,
 //     sequence: lastTest.equipmentsequence,
@@ -521,17 +515,17 @@
 
 // function estimateEOLCompletion(stationTests, lifecycle) {
 //   if (lifecycle.productionenddate) {
-//     return { 
-//       status: "COMPLETED", 
+//     return {
+//       status: "COMPLETED",
 //       completion_time: lifecycle.productionenddate,
 //       total_duration: "Available in production data"
 //     };
 //   }
-  
+
 //   const completedStations = stationTests.filter(s => s.teststatus === 'PASS').length;
 //   const totalStations = stationTests.length;
 //   const progress = totalStations > 0 ? (completedStations / totalStations * 100) : 0;
-  
+
 //   return {
 //     status: "IN_PROGRESS",
 //     progress_percentage: `${progress.toFixed(1)}%`,
@@ -543,7 +537,7 @@
 
 // function generateRecommendations(metrics, stationTests, reworkHistory) {
 //   const recommendations = [];
-  
+
 //   // Equipment recommendations
 //   if (metrics.equipment_utilization.bottleneck_analysis.severity === "HIGH") {
 //     recommendations.push({
@@ -554,7 +548,7 @@
 //       action: "Review station parameters and sequences"
 //     });
 //   }
-  
+
 //   // Quality recommendations
 //   const fpy = calculateFirstPassYield(stationTests);
 //   if (fpy < 95) {
@@ -566,7 +560,7 @@
 //       action: "Analyze root causes of test failures"
 //     });
 //   }
-  
+
 //   // Maintenance recommendations
 //   if (metrics.predictive_maintenance.maintenance_priority.priority === "HIGH") {
 //     recommendations.push({
@@ -577,18 +571,18 @@
 //       action: "Plan maintenance within 48 hours"
 //     });
 //   }
-  
+
 //   // Energy recommendations
 //   if (metrics.energy_monitoring.energy_efficiency.efficiency_score < "85%") {
 //     recommendations.push({
 //       category: "ENERGY_OPTIMIZATION",
-//       priority: "MEDIUM", 
+//       priority: "MEDIUM",
 //       title: "Improve Energy Efficiency",
 //       description: `Current efficiency: ${metrics.energy_monitoring.energy_efficiency.efficiency_score}`,
 //       action: "Review equipment power consumption"
 //     });
 //   }
-  
+
 //   return recommendations.length > 0 ? recommendations : [{
 //     category: "OPERATIONS",
 //     priority: "LOW",
@@ -606,38 +600,38 @@
 //   // In real implementation, you would query your measurement database
 //   // For now, returning realistic mechanical measurement data
 //   return {
-//     cover_screw_torque: { 
-//       value: 12.5, 
-//       unit: 'Nm', 
-//       tolerance: '±0.5', 
+//     cover_screw_torque: {
+//       value: 12.5,
+//       unit: 'Nm',
+//       tolerance: '±0.5',
 //       status: 'PASS',
 //       specification: '12.0-13.0 Nm'
 //     },
-//     main_bolt_torque: { 
-//       value: 45.2, 
-//       unit: 'Nm', 
-//       tolerance: '±1.0', 
+//     main_bolt_torque: {
+//       value: 45.2,
+//       unit: 'Nm',
+//       tolerance: '±1.0',
 //       status: 'PASS',
 //       specification: '44.0-46.0 Nm'
 //     },
-//     bracket_torque: { 
-//       value: 25.8, 
-//       unit: 'Nm', 
-//       tolerance: '±0.8', 
+//     bracket_torque: {
+//       value: 25.8,
+//       unit: 'Nm',
+//       tolerance: '±0.8',
 //       status: 'PASS',
 //       specification: '25.0-26.5 Nm'
 //     },
-//     connector_force: { 
-//       value: 35.6, 
-//       unit: 'N', 
-//       tolerance: '±2.0', 
+//     connector_force: {
+//       value: 35.6,
+//       unit: 'N',
+//       tolerance: '±2.0',
 //       status: 'PASS',
 //       specification: '33.0-38.0 N'
 //     },
-//     assembly_pressure: { 
-//       value: 8.3, 
-//       unit: 'bar', 
-//       tolerance: '±0.3', 
+//     assembly_pressure: {
+//       value: 8.3,
+//       unit: 'bar',
+//       tolerance: '±0.3',
 //       status: 'PASS',
 //       specification: '8.0-8.5 bar'
 //     }
@@ -650,11 +644,11 @@
 //     const productionUids = await runQuery(
 //       `SELECT uid, productid, productmodelname FROM public.productionlifecycle LIMIT 10`
 //     );
-    
+
 //     const testUids = await runQuery(
 //       `SELECT uid, teststatus FROM public.producteolresults LIMIT 10`
 //     );
-    
+
 //     res.json({
 //       success: true,
 //       production_uids: productionUids,
@@ -667,7 +661,6 @@
 // });
 
 // module.exports = router;
-
 
 /**
  * analysis.js - FINAL CLEAN VERSION
@@ -742,7 +735,7 @@
 //        2️⃣ STATION TESTS (PASS/FAIL/REWORK)
 //     ---------------------------------------------------------- */
 //     // const stationTests = await runQuery(
-//     //   `SELECT 
+//     //   `SELECT
 //     //       equipmentid AS station_name,
 //     //       productstatus
 //     //   FROM productionlifecycle
@@ -752,18 +745,17 @@
 //     // );
 
 //     // const stationTests = await runQuery(
-//     //     `SELECT DISTINCT ON (pl.equipmentid) 
+//     //     `SELECT DISTINCT ON (pl.equipmentid)
 //     //         pl.equipmentid,
 //     //         eq.equipmentname,
 //     //         pl.productstatus
 //     //     FROM productionlifecycle pl
-//     //     LEFT JOIN equipments eq 
+//     //     LEFT JOIN equipments eq
 //     //           ON pl.equipmentid = eq.equipmentid
 //     //     WHERE pl.uid = $1
 //     //     ORDER BY pl.equipmentid, pl.productionstartdate DESC`,
 //     //     [uid]
 //     // );
-
 
 //           /* ---------------------------------------------------------
 //       2️⃣ STATION TESTS (PASS/FAIL/REWORK) - IN PRODUCTION FLOW ORDER
@@ -841,7 +833,7 @@
 //       [uid]
 //     );
 //     const number_of_equipments = stationVisits[0].count; // ← KEEP ORIGINAL NAME
-    
+
 //     /* ---------------------------------------------------------
 //        5️⃣ CYCLE TIME IN MINUTES (END-TO-END)
 //     ---------------------------------------------------------- */
@@ -884,7 +876,6 @@
 //     //   station_name: row.equipmentname || row.equipmentid,
 //     //   status: row.productstatus
 //     // }));
-    
 
 //         /* ---------------------------------------------------------
 //       7️⃣ PRODUCTION FLOW LIST (in chronological order)
@@ -894,7 +885,6 @@
 //       status: row.productstatus
 //     }));
 
-    
 //     /* ---------------------------------------------------------
 //        8️⃣ MEASUREMENT DATA
 //        Only PASS stations, even if empty
@@ -974,6 +964,7 @@
 // module.exports = router;
 
 
+
 /**
  * analysis.js - FINAL CLEAN VERSION
  * Matches Analytics 4.0 UI EXACTLY as per requirement
@@ -1018,7 +1009,9 @@ router.get("/analysis", async (req, res) => {
   const { uid } = req.query;
 
   if (!uid) {
-    return res.status(400).json({ success: false, message: "UID parameter missing" });
+    return res
+      .status(400)
+      .json({ success: false, message: "UID parameter missing" });
   }
 
   try {
@@ -1084,7 +1077,7 @@ router.get("/analysis", async (req, res) => {
 
     // Create a map for easy lookup
     const measurementsMap = {};
-    measurementData.forEach(row => {
+    measurementData.forEach((row) => {
       measurementsMap[row.equipmentid] = row.measurements;
     });
 
@@ -1099,24 +1092,23 @@ router.get("/analysis", async (req, res) => {
     // );
     // const number_of_cycles = cycles[0].count;
 
-/* ---------------------------------------------------------
+    /* ---------------------------------------------------------
     3️⃣ NUMBER OF CYCLES (1 initial + number of FAILs)
 ---------------------------------------------------------- */
 
-const failRows = await runQuery(
-  `SELECT COUNT(*) AS fail_count
+    const failRows = await runQuery(
+      `SELECT COUNT(*) AS fail_count
    FROM productionlifecycle
    WHERE uid = $1 AND productstatus = 'FAIL'`,
-  [uid]
-);
+      [uid]
+    );
 
-// Prevent naming conflict with quality summary fail_count
-const fail_cycle_count = failRows.length > 0 ? Number(failRows[0].fail_count) : 0;
+    // Prevent naming conflict with quality summary fail_count
+    const fail_cycle_count =
+      failRows.length > 0 ? Number(failRows[0].fail_count) : 0;
 
-// Cycles = 1 initial attempt + number of FAILs
-const number_of_cycles = 1 + fail_cycle_count;
-
-
+    // Cycles = 1 initial attempt + number of FAILs
+    const number_of_cycles = 1 + fail_cycle_count;
 
     /* ---------------------------------------------------------
        4️⃣ NUMBER OF EQUIPMENTS
@@ -1128,7 +1120,7 @@ const number_of_cycles = 1 + fail_cycle_count;
       [uid]
     );
     const number_of_equipments = stationVisits[0].count;
-    
+
     /* ---------------------------------------------------------
        5️⃣ CYCLE TIME IN MINUTES (END-TO-END)
     ---------------------------------------------------------- */
@@ -1141,7 +1133,8 @@ const number_of_cycles = 1 + fail_cycle_count;
        WHERE uid = $1`,
       [uid]
     );
-    const cycle_time_minutes = Number(cycleTimeQuery[0].cycle_time_minutes) || 0;
+    const cycle_time_minutes =
+      Number(cycleTimeQuery[0].cycle_time_minutes) || 0;
 
     /* ---------------------------------------------------------
        6️⃣ QUALITY SUMMARY (PASS % / FAIL %)
@@ -1159,27 +1152,27 @@ const number_of_cycles = 1 + fail_cycle_count;
     const fail_count = passFail[0].fail;
     const total_pf = pass_count + fail_count;
 
-    const pass_percent = total_pf > 0 ? Number(((pass_count / total_pf) * 100).toFixed(2)) : 0;
-    const fail_percent = total_pf > 0 ? Number(((fail_count / total_pf) * 100).toFixed(2)) : 0;
+    const pass_percent =
+      total_pf > 0 ? Number(((pass_count / total_pf) * 100).toFixed(2)) : 0;
+    const fail_percent =
+      total_pf > 0 ? Number(((fail_count / total_pf) * 100).toFixed(2)) : 0;
 
     /* ---------------------------------------------------------
        7️⃣ PRODUCTION FLOW LIST (in chronological order)
     ---------------------------------------------------------- */
-    const station_flow = stationTests.map(row => ({
+    const station_flow = stationTests.map((row) => ({
       station_name: row.equipmentname || row.equipmentid,
-      status: row.productstatus
+      status: row.productstatus,
     }));
 
     /* ---------------------------------------------------------
-       8️⃣ MEASUREMENT DATA - WITH ACTUAL MEASUREMENTS
-    ---------------------------------------------------------- */
-    const measurement_data = stationTests
-      .filter(row => row.productstatus === "PASS")
-      .map(row => ({
-        station: row.equipmentname || row.equipmentid,
-        status: "PASS",
-        measurements: measurementsMap[row.equipmentid] || [] // ACTUAL MEASUREMENTS
-      }));
+   8️⃣ MEASUREMENT DATA - PASS + FAIL STATIONS
+---------------------------------------------------------- */
+    const measurement_data = stationTests.map((row) => ({
+      station: row.equipmentname || row.equipmentid,
+      status: row.productstatus, // PASS / FAIL / REWORK
+      measurements: measurementsMap[row.equipmentid] || [],
+    }));
 
     /* ---------------------------------------------------------
        FINAL RESPONSE (EXACTLY WHAT UI NEEDS)
@@ -1196,7 +1189,7 @@ const number_of_cycles = 1 + fail_cycle_count;
         production_start: product.productionstartdate,
         production_end: product.productionenddate,
         status: product.productstatus,
-        remarks: product.productionremarks
+        remarks: product.productionremarks,
       },
 
       cycle_time_minutes,
@@ -1207,22 +1200,21 @@ const number_of_cycles = 1 + fail_cycle_count;
         pass_percent,
         fail_percent,
         pass_count,
-        fail_count
+        fail_count,
       },
 
       station_flow,
-      measurement_data
+      measurement_data,
     };
 
     console.log("[ANALYSIS] Completed:", uid);
     return res.status(200).json(response);
-
   } catch (err) {
     console.error("[ANALYSIS ERROR]:", err.message);
     return res.status(500).json({
       success: false,
       message: "Server error in analysis",
-      error: err.message
+      error: err.message,
     });
   }
 });

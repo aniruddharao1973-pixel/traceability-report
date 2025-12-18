@@ -1,7 +1,7 @@
 /* PLEASE NOTE: THESE TAILWIND IMPORTS SHOULD NEVER BE DELETED */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 /* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
 
 /* Animation Keyframes for Traceability Report Loading Spinner */
@@ -28,7 +28,8 @@
 }
 
 @keyframes verticalScan {
-  0%, 100% {
+  0%,
+  100% {
     top: 0;
     opacity: 0.3;
   }
@@ -39,7 +40,8 @@
 }
 
 @keyframes horizontalScan {
-  0%, 100% {
+  0%,
+  100% {
     left: 0;
     opacity: 0.3;
   }
@@ -50,7 +52,8 @@
 }
 
 @keyframes pulseSegment {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
   }
   50% {
@@ -59,7 +62,8 @@
 }
 
 @keyframes barPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
     transform: scaleY(0.8);
   }
@@ -83,11 +87,12 @@
 
 /* Loading Animation Keyframes for Table Search */
 @keyframes bounce {
-  0%, 100% { 
-    transform: translateY(0); 
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  50% { 
-    transform: translateY(-10px); 
+  50% {
+    transform: translateY(-10px);
   }
 }
 
@@ -105,11 +110,11 @@
 
 /* Enhanced Spinner Animations */
 @keyframes spin-slow {
-  0% { 
-    transform: rotate(0deg); 
+  0% {
+    transform: rotate(0deg);
   }
-  100% { 
-    transform: rotate(360deg); 
+  100% {
+    transform: rotate(360deg);
   }
 }
 
@@ -119,11 +124,12 @@
 
 /* Pulse animation for text */
 @keyframes pulse-soft {
-  0%, 100% { 
-    opacity: 1; 
+  0%,
+  100% {
+    opacity: 1;
   }
-  50% { 
-    opacity: 0.7; 
+  50% {
+    opacity: 0.7;
   }
 }
 
@@ -149,15 +155,14 @@
   animation: gradient-shift 3s ease infinite;
 }
 
-
-
 /* New Loader Animations */
 @keyframes fillRow {
-  0%, 100% { 
-    opacity: 0.3; 
+  0%,
+  100% {
+    opacity: 0.3;
   }
-  50% { 
-    opacity: 1; 
+  50% {
+    opacity: 1;
   }
 }
 
@@ -166,14 +171,14 @@
 }
 
 @keyframes progressFill {
-  0% { 
-    width: 0%; 
+  0% {
+    width: 0%;
   }
-  50% { 
-    width: 100%; 
+  50% {
+    width: 100%;
   }
-  100% { 
-    width: 0%; 
+  100% {
+    width: 0%;
   }
 }
 
@@ -182,11 +187,11 @@
 }
 
 @keyframes slideProgress {
-  0% { 
-    transform: translateX(-100%); 
+  0% {
+    transform: translateX(-100%);
   }
-  100% { 
-    transform: translateX(100%); 
+  100% {
+    transform: translateX(100%);
   }
 }
 
@@ -194,7 +199,58 @@
   animation: slideProgress 2s ease-in-out infinite;
 }
 
-
-
 /* data analytics dashboard animations */
 
+/* Add to your global styles */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@media print {
+  body {
+    background: white !important;
+  }
+
+  #full-report-page {
+    max-width: 100% !important;
+    padding: 16px !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  section,
+  .rounded-2xl,
+  .rounded-3xl {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .backdrop-blur-2xl,
+  .blur-3xl {
+    backdrop-filter: none !important;
+    filter: none !important;
+  }
+}

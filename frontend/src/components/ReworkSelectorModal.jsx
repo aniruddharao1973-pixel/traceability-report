@@ -21,7 +21,6 @@
 //     endpoint = "/api/trace/rework-pending-count/uids";
 //     }
 
-
 //   setLoading(true);
 //   setSelectedUid("");
 //   setRows([]);
@@ -36,7 +35,6 @@
 
 //   return () => controller.abort();
 // }, [mode]);
-
 
 //   const handleGenerate = () => {
 //     if (!selectedUid) {
@@ -125,7 +123,6 @@
 //         })}
 //     </div>
 
-
 //       {/* Actions */}
 //       <div className="flex gap-2 mt-4">
 //         <button
@@ -151,8 +148,6 @@
 //   );
 // }
 
-
-
 // components\ReworkSelectorModal.jsx
 import React, { useEffect, useState } from "react";
 import { FileCheck, Clock, AlertCircle, X, ChevronRight } from "lucide-react";
@@ -163,7 +158,8 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
   const [mode, setMode] = useState("rework-approved");
   const [rows, setRows] = useState([]);
   const [selectedUid, setSelectedUid] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 
   useEffect(() => {
     let endpoint = "";
@@ -178,6 +174,7 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
     }
 
     setLoading(true);
+    setHasFetchedOnce(false);
     setSelectedUid("");
     setRows([]);
 
@@ -187,7 +184,10 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
       .catch((e) => {
         if (e.name !== "AbortError") setRows([]);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setHasFetchedOnce(true);
+      });
 
     return () => controller.abort();
   }, [mode]);
@@ -214,7 +214,7 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
       color: "from-green-500 to-emerald-600",
       bgColor: "bg-green-50",
       textColor: "text-green-700",
-      borderColor: "border-green-500"
+      borderColor: "border-green-500",
     },
     {
       id: "rework-approved-pending-from-production",
@@ -223,7 +223,7 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
       color: "from-orange-500 to-amber-600",
       bgColor: "bg-orange-50",
       textColor: "text-orange-700",
-      borderColor: "border-orange-500"
+      borderColor: "border-orange-500",
     },
     {
       id: "rework-pending",
@@ -232,8 +232,8 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
       color: "from-red-500 to-rose-600",
       bgColor: "bg-red-50",
       textColor: "text-red-700",
-      borderColor: "border-red-500"
-    }
+      borderColor: "border-red-500",
+    },
   ];
 
   return (
@@ -248,7 +248,9 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
             <X size={20} />
           </button>
           <h2 className="text-2xl font-bold text-white">Rework Reports</h2>
-          <p className="text-white/90 text-sm mt-1">Select report type and UID to generate</p>
+          <p className="text-white/90 text-sm mt-1">
+            Select report type and UID to generate
+          </p>
         </div>
 
         <div className="p-6">
@@ -257,7 +259,7 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
             {modes.map((m) => {
               const Icon = m.icon;
               const isActive = mode === m.id;
-              
+
               return (
                 <button
                   key={m.id}
@@ -268,14 +270,21 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
                       : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md"
                   }`}
                 >
-                  <div className={`inline-flex p-2 rounded-lg mb-2 ${
-                    isActive ? `bg-gradient-to-br ${m.color}` : "bg-gray-100"
-                  }`}>
-                    <Icon size={20} className={isActive ? "text-white" : "text-gray-600"} />
+                  <div
+                    className={`inline-flex p-2 rounded-lg mb-2 ${
+                      isActive ? `bg-gradient-to-br ${m.color}` : "bg-gray-100"
+                    }`}
+                  >
+                    <Icon
+                      size={20}
+                      className={isActive ? "text-white" : "text-gray-600"}
+                    />
                   </div>
-                  <div className={`text-xs font-semibold ${
-                    isActive ? m.textColor : "text-gray-700"
-                  }`}>
+                  <div
+                    className={`text-xs font-semibold ${
+                      isActive ? m.textColor : "text-gray-700"
+                    }`}
+                  >
                     {m.label}
                   </div>
                 </button>
@@ -289,26 +298,32 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
               <span className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-purple-500 rounded-full"></span>
               Select UID
               <span className="ml-auto text-xs font-normal text-gray-500">
-                {rows.length} {rows.length === 1 ? 'record' : 'records'}
+                {rows.length} {rows.length === 1 ? "record" : "records"}
               </span>
             </h3>
-            
+
             <div className="border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50">
               <div className="max-h-72 overflow-auto">
                 {loading && (
                   <div className="p-8 text-center">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent"></div>
-                    <p className="text-sm text-gray-500 mt-3">Loading records...</p>
+                    <p className="text-sm text-gray-500 mt-3">
+                      Loading records...
+                    </p>
                   </div>
                 )}
 
-                {!loading && rows.length === 0 && (
+                {hasFetchedOnce && !loading && rows.length === 0 && (
                   <div className="p-8 text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-200 mb-3">
                       <AlertCircle size={32} className="text-gray-400" />
                     </div>
-                    <p className="text-sm text-gray-500 font-medium">No records found</p>
-                    <p className="text-xs text-gray-400 mt-1">Try selecting a different report type</p>
+                    <p className="text-sm text-gray-500 font-medium">
+                      No records found
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Try selecting a different report type
+                    </p>
                   </div>
                 )}
 
@@ -322,7 +337,9 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
                         key={uid}
                         onClick={() => setSelectedUid(uid)}
                         className={`p-4 cursor-pointer transition-all duration-150 flex items-center justify-between group ${
-                          index !== rows.length - 1 ? "border-b border-gray-200" : ""
+                          index !== rows.length - 1
+                            ? "border-b border-gray-200"
+                            : ""
                         } ${
                           selectedUid === uid
                             ? "bg-gradient-to-r from-blue-100 to-purple-100 border-l-4 border-l-purple-500"
@@ -330,12 +347,20 @@ export default function ReworkSelectorModal({ onClose, onGenerate }) {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${
-                            selectedUid === uid ? "bg-purple-500" : "bg-gray-300 group-hover:bg-purple-400"
-                          }`}></div>
-                          <span className={`font-mono text-sm ${
-                            selectedUid === uid ? "font-semibold text-purple-900" : "text-gray-700"
-                          }`}>
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              selectedUid === uid
+                                ? "bg-purple-500"
+                                : "bg-gray-300 group-hover:bg-purple-400"
+                            }`}
+                          ></div>
+                          <span
+                            className={`font-mono text-sm ${
+                              selectedUid === uid
+                                ? "font-semibold text-purple-900"
+                                : "text-gray-700"
+                            }`}
+                          >
                             {uid}
                           </span>
                         </div>
