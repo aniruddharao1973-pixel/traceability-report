@@ -1473,7 +1473,35 @@ export function OrderTable({
                     onClick={() => setShowCustomPicker(false)}
                   />
                   
-                  <div className="absolute left-0 sm:left-auto right-0 sm:right-auto top-full mt-2 mx-2 sm:mx-0 p-4 bg-gradient-to-br from-white to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl sm:rounded-2xl border-2 border-indigo-200 dark:border-indigo-700 shadow-2xl z-50 w-[calc(100vw-2rem)] sm:w-[320px] md:w-[420px] max-w-[420px] backdrop-blur-sm">
+                  <div
+  className="
+    fixed sm:absolute
+    inset-0 sm:inset-auto
+    sm:left-0 sm:top-full
+    flex sm:block
+    items-center justify-center
+    z-50
+  "
+>
+  {/* mobile background handled already by overlay */}
+
+  <div
+    className="
+      w-[92vw]
+      max-w-[420px]
+      mx-auto
+      sm:mx-0
+      bg-gradient-to-br from-white to-indigo-50
+      dark:from-gray-800 dark:to-gray-900
+      rounded-xl sm:rounded-2xl
+      border-2 border-indigo-200 dark:border-indigo-700
+      shadow-2xl
+      p-4
+      backdrop-blur-sm
+    "
+    onClick={(e) => e.stopPropagation()}
+  >
+
                     {/* Header */}
                     <div className="flex items-center justify-between mb-3 pb-2 border-b border-indigo-200 dark:border-indigo-700">
                       <h3 className="text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent flex items-center gap-2">
@@ -1565,6 +1593,7 @@ export function OrderTable({
                         </button>
                       </div>
                     </div>
+                  </div>
                   </div>
                 </>
               )}

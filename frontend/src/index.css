@@ -254,3 +254,11 @@
     filter: none !important;
   }
 }
+/* Add to your CSS */
+.no-close {
+  pointer-events: none;
+}
+
+.no-close * {
+  pointer-events: auto;
+}
