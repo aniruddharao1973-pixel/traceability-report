@@ -145,45 +145,42 @@
 
 // export default App;
 
-
-
 // src/App.jsx
-import React, { useState, useMemo, useEffect } from 'react';
-import { Header } from './components/Header';
-import { OrderTable } from './components/OrderTable';
-import { ReportsPanel } from './components/ReportsPanel';
-import { StatusCards } from './components/StatusCards';
-import { ThemeProvider } from './contexts/ThemeContext';
+import React, { useState, useMemo, useEffect } from "react";
+import { Header } from "./components/Header";
+import { OrderTable } from "./components/OrderTable";
+import { ReportsPanel } from "./components/ReportsPanel";
+import { StatusCards } from "./components/StatusCards";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 export function App() {
   const [orders, setOrders] = useState([]);
   const [visibleOrders, setVisibleOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
   const [lineMap, setLineMap] = useState({});
   const [loading, setLoading] = useState(false);
 
   const handleReset = () => {
-    console.log('App handleReset called - clearing orders and visibleOrders');
+    console.log("App handleReset called - clearing orders and visibleOrders");
     setOrders([]);
     setVisibleOrders([]);
     setSelectedOrder(null);
-    setErrorMsg('');
+    setErrorMsg("");
     setLoading(false); // Also reset loading state on reset
-  }
+  };
 
-  const API_BASE_RAW = import.meta.env.VITE_API_BASE || '';
-  const API_BASE = API_BASE_RAW.replace(/\/$/, '');
+  const API_BASE_RAW = import.meta.env.VITE_API_BASE || "";
+  const API_BASE = API_BASE_RAW.replace(/\/$/, "");
 
-  
   const clearSelectedOrder = () => setSelectedOrder(null);
 
   const normalizeStatus = (s) => {
-    const t = (s || '').toString().trim().toLowerCase();
-    if (!t) return '';
-    if (t === 'pass' || t === 'passed' || t === 'completed') return 'Completed';
-    if (t === 'scrap') return 'Scrap';
-    if (t.includes('in progress')) return 'In Progress';
+    const t = (s || "").toString().trim().toLowerCase();
+    if (!t) return "";
+    if (t === "pass" || t === "passed" || t === "completed") return "Completed";
+    if (t === "scrap") return "Scrap";
+    if (t.includes("in progress")) return "In Progress";
     return s;
   };
 
@@ -191,20 +188,24 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      
       try {
         const r = await fetch(`${API_BASE}/api/trace/productionlines`);
         const j = await r.json();
         if (cancelled) return;
         const map = Object.fromEntries(
-          (j?.data || []).map((x) => [String(x.productid || '').trim(), x.productionlinename])
+          (j?.data || []).map((x) => [
+            String(x.productid || "").trim(),
+            x.productionlinename,
+          ]),
         );
         setLineMap(map);
       } catch (e) {
-        console.error('Failed to load productionlines', e);
+        console.error("Failed to load productionlines", e);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [API_BASE]);
 
   // Enrich raw API rows with extra info
@@ -212,24 +213,26 @@ export function App() {
     return orders.map((r, idx) => {
       const raw = r.__raw || r;
       const productid =
-        r.productid || r.productId || r.PRODUCTID ||
-        (raw && (raw.productid || raw.productId || raw.PRODUCTID)) || '';
-      const productidKey = String(productid || '').trim();
-      const uid = r.uid || r.UID || (raw && (raw.uid || raw.UID)) || '';
-      const line = (productidKey && lineMap[productidKey]) ||
-        r.line || null;
+        r.productid ||
+        r.productId ||
+        r.PRODUCTID ||
+        (raw && (raw.productid || raw.productId || raw.PRODUCTID)) ||
+        "";
+      const productidKey = String(productid || "").trim();
+      const uid = r.uid || r.UID || (raw && (raw.uid || raw.UID)) || "";
+      const line = (productidKey && lineMap[productidKey]) || r.line || null;
       return {
         id: r.id || uid || String(idx + 1),
         uid,
         productid,
         line,
-        model: r.productmodelname || r.model || '',
-        variant: r.productvariant || r.variant || '',
-        startDate: r.productionstartdate || r.startDate || '',
-        endDate: r.productionenddate || r.endDate || '',
+        model: r.productmodelname || r.model || "",
+        variant: r.productvariant || r.variant || "",
+        startDate: r.productionstartdate || r.startDate || "",
+        endDate: r.productionenddate || r.endDate || "",
         status: normalizeStatus(r.status || r.productstatus),
-        endOfLineUid: r.endoflineuid || r.endofline_uid || r.endOfLineUid || '',
-        __raw: r
+        endOfLineUid: r.endoflineuid || r.endofline_uid || r.endOfLineUid || "",
+        __raw: r,
       };
     });
   }, [orders, lineMap]);
@@ -240,19 +243,23 @@ export function App() {
         <Header
           onSearchResults={(res) => {
             try {
-              setErrorMsg('');
+              setErrorMsg("");
               setLoading(false); // Stop loading when results arrive
-              const rows = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+              const rows = Array.isArray(res?.data)
+                ? res.data
+                : Array.isArray(res)
+                  ? res
+                  : [];
               setOrders(Array.isArray(rows) ? rows : []);
             } catch (e) {
-              console.error('onResults mapping error', e);
+              console.error("onResults mapping error", e);
               setOrders([]);
-              setErrorMsg('Failed to read results');
+              setErrorMsg("Failed to read results");
               setLoading(false); // Stop loading on error too
             }
           }}
           onSearchError={(msg) => {
-            setErrorMsg(msg || 'Search failed');
+            setErrorMsg(msg || "Search failed");
             setLoading(false); // Stop loading on error
           }}
           selectedOrder={selectedOrder}
@@ -268,54 +275,64 @@ export function App() {
               </div>
             )}
 
+            {loading && (
+              <div className="fixed inset-0 bg-white/30 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div className="w-full max-w-md">
+                  <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-lg shadow-xl p-8">
+                    <div className="mb-8">
+                      <h3 className="text-slate-900 dark:text-white font-semibold text-lg mb-3">
+                        Searching Database
+                      </h3>
 
+                      <div className="flex items-center gap-1">
+                        <div
+                          className="w-2 h-2 bg-sky-500 rounded-full animate-bounce"
+                          style={{ animationDelay: "0s" }}
+                        />
+                        <div
+                          className="w-2 h-2 bg-sky-500 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        />
+                        <div
+                          className="w-2 h-2 bg-sky-500 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        />
+                      </div>
+                    </div>
 
-{loading && (
-  <div className="fixed inset-0 bg-white/30 backdrop-blur-sm z-50 flex items-center justify-center">
-    <div className="w-full max-w-md">
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-lg shadow-xl p-8">
-        <div className="mb-8">
-          <h3 className="text-slate-900 dark:text-white font-semibold text-lg mb-3">
-            Searching Database
-          </h3>
-          
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-sky-500 rounded-full animate-bounce" 
-                 style={{ animationDelay: '0s' }} />
-            <div className="w-2 h-2 bg-sky-500 rounded-full animate-bounce" 
-                 style={{ animationDelay: '0.1s' }} />
-            <div className="w-2 h-2 bg-sky-500 rounded-full animate-bounce" 
-                 style={{ animationDelay: '0.2s' }} />
-          </div>
-        </div>
+                    <div className="space-y-2 mb-6">
+                      {[...Array(4)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="h-3 bg-slate-100 rounded overflow-hidden"
+                          style={{
+                            animation: `fillRow 2s ease-in-out infinite`,
+                            animationDelay: `${i * 0.2}s`,
+                          }}
+                        >
+                          <div
+                            className="h-full bg-sky-500"
+                            style={{
+                              animation: `progressFill 2s ease-in-out infinite`,
+                              animationDelay: `${i * 0.2}s`,
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
 
-        <div className="space-y-2 mb-6">
-          {[...Array(4)].map((_, i) => (
-            <div 
-              key={i}
-              className="h-3 bg-slate-100 rounded overflow-hidden"
-              style={{
-                animation: `fillRow 2s ease-in-out infinite`,
-                animationDelay: `${i * 0.2}s`
-              }}
-            >
-              <div className="h-full bg-sky-500" style={{
-                animation: `progressFill 2s ease-in-out infinite`,
-                animationDelay: `${i * 0.2}s`
-              }} />
-            </div>
-          ))}
-        </div>
-
-        <div className="relative h-1 bg-slate-100 rounded-full overflow-hidden">
-          <div className="absolute inset-0 bg-sky-600" style={{
-            animation: 'slideProgress 2s ease-in-out infinite'
-          }} />
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+                    <div className="relative h-1 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="absolute inset-0 bg-sky-600"
+                        style={{
+                          animation: "slideProgress 2s ease-in-out infinite",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.9fr)_450px] gap-4 items-start">
               {/* Left: Orders table */}
@@ -333,12 +350,14 @@ export function App() {
 
               {/* Right: StatusCards + ReportsPanel */}
               {/* <div className="w-[570px] sticky top-4 self-start ml-4"> */}
-              <div className="
+              <div
+                className="
                 w-full 
                 md:w-[450px] lg:w-[520px] xl:w-[570px] 
                 md:sticky md:top-4 md:self-start 
                 md:ml-4
-              ">
+              "
+              >
                 <div className="space-y-6 overflow-hidden">
                   <StatusCards orders={mappedOrders} />
                   <ReportsPanel

@@ -20,7 +20,7 @@
 //     setIsLoading(true)
 //     setTimeout(() => setIsLoading(false), 1500)
 //   }
-  
+
 //   const handleClear = () => {
 //     setFromDate('2023-09-19')
 //     setFromTime('00:00:00')
@@ -278,7 +278,7 @@
 //       > */}
 //         {/* Shimmer effect */}
 //         {/* <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div> */}
-        
+
 //         {/* <span className="relative flex items-center justify-center gap-2">
 //           {isLoading ? (
 //             <>
@@ -300,7 +300,7 @@
 //       {/* Info panel - Card Grid */}
 //       <div className="border-t-2 border-sky-200/50 dark:border-purple-500/30 pt-6">
 //         <h3 className="text-lg font-bold text-sky-700 dark:text-sky-300 mb-3">Production Details</h3>
-        
+
 //         {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-3"> */}
 //         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 //           {/* UID Card */}
@@ -417,222 +417,589 @@
 //   )
 // }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// // src/components/ReportsPanel.jsx
+// import React, { useState, useEffect } from 'react'
+// import { BarChart3, Calendar, Clock, FileText, Zap, Package, CheckCircle, AlertCircle } from 'lucide-react'
+
+// export function ReportsPanel({ selectedOrder, apiBase = '', clearSelectedOrder = () => {} }) {
+//   const [fromDate, setFromDate] = useState('2023-09-19')
+//   const [fromTime, setFromTime] = useState('00:00:00')
+//   const [toDate, setToDate] = useState('2023-09-19')
+//   const [toTime, setToTime] = useState('23:59:59')
+//   const [includeDate, setIncludeDate] = useState(true)
+//   const [reportType, setReportType] = useState('')
+//   const [isLoading, setIsLoading] = useState(false)
+//   const [eolData, setEolData] = useState({})
+
+//   const [eolUid, setEolUid] = useState('')
+//   const [eolLoading, setEolLoading] = useState(false)
+//   const [eolError, setEolError] = useState('')
+
+//   const handleApply = () => {
+//     setIsLoading(true)
+//     setTimeout(() => setIsLoading(false), 1500)
+//   }
+
+//   const handleClear = () => {
+//     setFromDate('2023-09-19')
+//     setFromTime('00:00:00')
+//     setToDate('2023-09-19')
+//     setToTime('23:59:59')
+//     setIncludeDate(true)
+//     setReportType('')
+//     setEolUid('')
+//     setEolError('')
+//     setEolData({})
+//     clearSelectedOrder()
+//   }
+
+//   const handleQuickSelect = (days) => {
+//     const today = new Date()
+//     const pastDate = new Date()
+//     pastDate.setDate(today.getDate() - days)
+//     const formatDate = (d) => d.toISOString().split('T')[0]
+//     setFromDate(formatDate(pastDate))
+//     setToDate(formatDate(today))
+//   }
+
+//   // 🔥 End of Line UID Logic (unchanged)
+//   useEffect(() => {
+//     const uid = selectedOrder?._uid || selectedOrder?.uid || ''
+//     if (!uid) {
+//       setEolUid('')
+//       setEolError('')
+//       setEolData({})
+//       return
+//     }
+
+//     const fromOrder =
+//       selectedOrder?.endoflineuid ||
+//       selectedOrder?.endOfLineUid ||
+//       selectedOrder?.eoluid || ''
+
+//     if (fromOrder) {
+//       setEolUid(fromOrder)
+//       setEolData({})
+//       setEolError('')
+//       return
+//     }
+
+//     const controller = new AbortController()
+//     const signal = controller.signal
+//     const base = (apiBase || '').replace(/\/$/, '')
+//     const url = `${base}/api/trace/endoflineuid/${encodeURIComponent(uid)}`
+
+//     setEolLoading(true)
+//     setEolError('')
+//     setEolData({})
+
+//     fetch(url, { signal })
+//       .then(async (res) => {
+//         if (!res.ok) throw new Error(`HTTP ${res.status}`)
+//         const data = await res.json()
+//         const row = data?.data || {}
+//         setEolUid(row?.endoflineuid || '')
+//         setEolData(row)
+//       })
+//       .catch((err) => {
+//         if (err.name === 'AbortError') return
+//         setEolUid('')
+//         setEolError(err.message || 'Failed to fetch EOL UID')
+//       })
+//       .finally(() => setEolLoading(false))
+
+//     return () => controller.abort()
+//   }, [apiBase, selectedOrder])
+
+//   const getStatusColor = (status) => {
+//     const s = (status || '').toLowerCase()
+//     if (s.includes('pass') || s.includes('success') || s.includes('complete')) {
+//       return 'from-green-400 to-emerald-600'
+//     }
+//     if (s.includes('pending') || s.includes('progress')) {
+//       return 'from-yellow-400 to-orange-600'
+//     }
+//     if (s.includes('fail') || s.includes('error')) {
+//       return 'from-red-400 to-rose-600'
+//     }
+//     return 'from-gray-400 to-gray-600'
+//   }
+
+//   return (
+//     <div
+//       className="
+//         relative bg-gradient-to-br from-sky-50 via-purple-50 to-sky-100
+//         dark:from-gray-900 dark:via-purple-900/20 dark:to-gray-900
+//         shadow-2xl rounded-2xl p-4
+//         border border-sky-200/50 dark:border-purple-500/20
+//         overflow-hidden transition-colors duration-200
+
+//         /* RESPONSIVE ADDED ONLY */
+//         sm:p-5
+//         md:p-6
+//         lg:p-7
+//       "
+//     >
+//       {/* Decorative blobs (unchanged) */}
+//       <div className="absolute top-0 right-0 w-72 h-72 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl -z-10"></div>
+//       <div className="absolute bottom-0 left-0 w-72 h-72 bg-sky-300/20 dark:bg-sky-500/10 rounded-full blur-3xl -z-10"></div>
+//       <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-300/10 dark:bg-pink-500/5 rounded-full blur-3xl -z-10"></div>
+
+//       {/* ============================== */}
+//       {/* PRODUCTION DETAILS SECTION    */}
+//       {/* ============================== */}
+
+//       <div className="border-t-2 border-sky-200/50 dark:border-purple-500/30 pt-6">
+
+//         <h3
+//           className="
+//             text-lg font-bold text-sky-700 dark:text-sky-300 mb-3
+//             /* Responsive */
+//             sm:text-xl
+//             md:text-2xl
+//           "
+//         >
+//           Production Details
+//         </h3>
+
+//         {/* RESPONSIVE GRID ONLY ADDED */}
+//         <div
+//           className="
+//             grid grid-cols-1
+//             sm:grid-cols-2
+//             lg:grid-cols-2
+//             gap-3
+//             sm:gap-4
+//             md:gap-5
+//           "
+//         >
+//           {/* UID CARD */}
+//           <div className="
+//             group p-5 rounded-xl
+//             bg-gradient-to-br from-white to-sky-100
+//             dark:from-gray-800 dark:to-purple-900/20
+//             border border-sky-300/50 dark:border-purple-500/30
+//             shadow-lg hover:shadow-xl hover:scale-[1.02]
+//             transition-all duration-300
+
+//             /* Responsive spacing */
+//             sm:p-5
+//             md:p-6
+//           ">
+//             <div className="flex items-start gap-3">
+//               <div className="p-2 bg-gradient-to-br from-sky-400 to-purple-500 rounded-lg shrink-0">
+//                 <Package className="w-5 h-5 text-white" />
+//               </div>
+//               <div className="flex-1 min-w-0">
+//                 <p className="text-xs font-semibold text-sky-600 dark:text-sky-400 mb-1">
+//                   UID
+//                 </p>
+//                 <p className="text-sm font-bold text-gray-900 dark:text-white break-words">
+//                   {selectedOrder?._uid || selectedOrder?.uid || '-'}
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* LINE CARD */}
+//           <div className="
+//             group p-5 rounded-xl
+//             bg-gradient-to-br from-white to-purple-200
+//             dark:from-gray-800 dark:to-purple-900/20
+//             border border-purple-300/50 dark:border-purple-500/30
+//             shadow-lg hover:shadow-xl hover:scale-[1.02]
+//             transition-all duration-300
+
+//             sm:p-5
+//             md:p-6
+//           ">
+//             <div className="flex items-start gap-3">
+//               <div className="p-2 bg-gradient-to-br from-purple-400 to-sky-500 rounded-lg shrink-0">
+//                 <BarChart3 className="w-5 h-5 text-white" />
+//               </div>
+
+//               <div className="flex-1 min-w-0">
+//                 <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+//                   Line
+//                 </p>
+
+//                 {eolLoading ? (
+//                   <div className="animate-pulse">
+//                     <div className="h-4 bg-gradient-to-r from-sky-200 to-purple-200 rounded w-3/4"></div>
+//                   </div>
+//                 ) : (
+//                   <p className="text-sm font-bold text-gray-900 dark:text-white">
+//                     {eolData.productline ||
+//                       selectedOrder?._line ||
+//                       selectedOrder?.line ||
+//                       'N/A'}
+//                   </p>
+//                 )}
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* DATE CARD */}
+//           <div className="
+//             group p-5 rounded-xl
+//             bg-gradient-to-br from-white to-sky-100
+//             dark:from-gray-800 dark:to-sky-900/20
+//             border border-sky-300/50 dark:border-sky-500/30
+//             shadow-lg hover:shadow-xl hover:scale-[1.02]
+//             transition-all duration-300
+
+//             sm:p-5
+//             md:p-6
+//           ">
+//             <div className="flex items-start gap-3">
+//               <div className="p-2 bg-gradient-to-br from-sky-400 to-blue-500 rounded-lg shrink-0">
+//                 <Calendar className="w-5 h-5 text-white" />
+//               </div>
+
+//               <div className="flex-1 min-w-0">
+//                 <p className="text-xs font-semibold text-sky-600 dark:text-sky-400 mb-1">
+//                   Date
+//                 </p>
+//                 <p className="text-sm font-bold text-gray-900 dark:text-white break-words">
+//                   {selectedOrder?._endDate ||
+//                     selectedOrder?.productionenddate ||
+//                     '-'}
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* STATUS CARD */}
+//           <div className="
+//             group p-5 rounded-xl
+//             bg-gradient-to-br from-white to-purple-200
+//             dark:from-gray-800 dark:to-purple-900/20
+//             border border-purple-300/50 dark:border-purple-500/30
+//             shadow-lg hover:shadow-xl hover:scale-[1.02]
+//             transition-all duration-300
+
+//             sm:p-5
+//             md:p-6
+//           ">
+//             <div className="flex items-start gap-3">
+//               <div className="p-2 bg-gradient-to-br from-purple-400 to-sky-400 rounded-lg shrink-0">
+//                 <CheckCircle className="w-5 h-5 text-white" />
+//               </div>
+
+//               <div className="flex-1 min-w-0">
+//                 <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+//                   Status
+//                 </p>
+
+//                 <span
+//                   className={`
+//                     inline-flex px-3 py-1 rounded-full text-xs font-bold
+//                     bg-gradient-to-r ${getStatusColor(selectedOrder?._status || selectedOrder?.status)}
+//                     text-white shadow-md
+//                   `}
+//                 >
+//                   {selectedOrder?._status ||
+//                     selectedOrder?.status ||
+//                     '-'}
+//                 </span>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* END OF LINE UID CARD — FULL WIDTH ON TABLET, AUTO ON DESKTOP */}
+//           <div className="
+//             col-span-1
+//             sm:col-span-2
+//             group p-5 rounded-xl
+//             bg-gradient-to-br from-white to-indigo-50
+//             dark:from-gray-800 dark:to-indigo-900/20
+//             border border-indigo-300/50 dark:border-indigo-500/30
+//             shadow-lg hover:shadow-xl hover:scale-[1.01]
+//             transition-all duration-300
+
+//             sm:p-5
+//             md:p-6
+//           ">
+//             <div className="flex items-start gap-3">
+//               <div className="p-2 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg shrink-0">
+//                 <AlertCircle className="w-5 h-5 text-white" />
+//               </div>
+
+//               <div className="flex-1 min-w-0">
+//                 <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
+//                   End of Line UID
+//                 </p>
+
+//                 {eolLoading ? (
+//                   <div className="animate-pulse flex gap-2">
+//                     <div className="h-4 bg-gradient-to-r from-indigo-200 to-purple-200 rounded w-1/2"></div>
+//                     <div className="h-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded w-1/4"></div>
+//                   </div>
+//                 ) : (
+//                   <>
+//                     <p className="text-sm font-bold text-gray-900 dark:text-white break-words">
+//                       {eolData.endoflineuid || 'N/A'}
+//                     </p>
+
+//                     {eolError && (
+//                       <span className="mt-1 inline-flex items-center gap-1 text-xs text-red-500 dark:text-red-400">
+//                         <AlertCircle className="w-3 h-3" />
+//                         {eolError}
+//                       </span>
+//                     )}
+//                   </>
+//                 )}
+//               </div>
+//             </div>
+//           </div>
+
+//         </div>{/* END GRID */}
+//       </div>{/* END PRODUCTION DETAILS */}
+
+//     </div>
+//   )
+// }
+
 // src/components/ReportsPanel.jsx
-import React, { useState, useEffect } from 'react'
-import { BarChart3, Calendar, Clock, FileText, Zap, Package, CheckCircle, AlertCircle } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import {
+  BarChart3,
+  Calendar,
+  Clock,
+  FileText,
+  Zap,
+  Package,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 
-export function ReportsPanel({ selectedOrder, apiBase = '', clearSelectedOrder = () => {} }) {
-  const [fromDate, setFromDate] = useState('2023-09-19')
-  const [fromTime, setFromTime] = useState('00:00:00')
-  const [toDate, setToDate] = useState('2023-09-19')
-  const [toTime, setToTime] = useState('23:59:59')
-  const [includeDate, setIncludeDate] = useState(true)
-  const [reportType, setReportType] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [eolData, setEolData] = useState({})
+export function ReportsPanel({
+  selectedOrder,
+  apiBase = "",
+  clearSelectedOrder = () => {},
+}) {
+  const [fromDate, setFromDate] = useState("2023-09-19");
+  const [fromTime, setFromTime] = useState("00:00:00");
+  const [toDate, setToDate] = useState("2023-09-19");
+  const [toTime, setToTime] = useState("23:59:59");
+  const [includeDate, setIncludeDate] = useState(true);
+  const [reportType, setReportType] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [eolData, setEolData] = useState({});
 
-  const [eolUid, setEolUid] = useState('')
-  const [eolLoading, setEolLoading] = useState(false)
-  const [eolError, setEolError] = useState('')
+  const [eolUid, setEolUid] = useState("");
+  const [eolLoading, setEolLoading] = useState(false);
+  const [eolError, setEolError] = useState("");
 
   const handleApply = () => {
-    setIsLoading(true)
-    setTimeout(() => setIsLoading(false), 1500)
-  }
-  
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 1500);
+  };
+
   const handleClear = () => {
-    setFromDate('2023-09-19')
-    setFromTime('00:00:00')
-    setToDate('2023-09-19')
-    setToTime('23:59:59')
-    setIncludeDate(true)
-    setReportType('')
-    setEolUid('')
-    setEolError('')
-    setEolData({})
-    clearSelectedOrder()
-  }
+    setFromDate("2023-09-19");
+    setFromTime("00:00:00");
+    setToDate("2023-09-19");
+    setToTime("23:59:59");
+    setIncludeDate(true);
+    setReportType("");
+    setEolUid("");
+    setEolError("");
+    setEolData({});
+    clearSelectedOrder();
+  };
 
   const handleQuickSelect = (days) => {
-    const today = new Date()
-    const pastDate = new Date()
-    pastDate.setDate(today.getDate() - days)
-    const formatDate = (d) => d.toISOString().split('T')[0]
-    setFromDate(formatDate(pastDate))
-    setToDate(formatDate(today))
-  }
+    const today = new Date();
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - days);
+    const formatDate = (d) => d.toISOString().split("T")[0];
+    setFromDate(formatDate(pastDate));
+    setToDate(formatDate(today));
+  };
 
   // 🔥 End of Line UID Logic (unchanged)
   useEffect(() => {
-    const uid = selectedOrder?._uid || selectedOrder?.uid || ''
+    const uid = selectedOrder?._uid || selectedOrder?.uid || "";
     if (!uid) {
-      setEolUid('')
-      setEolError('')
-      setEolData({})
-      return
+      setEolUid("");
+      setEolError("");
+      setEolData({});
+      return;
     }
 
     const fromOrder =
       selectedOrder?.endoflineuid ||
       selectedOrder?.endOfLineUid ||
-      selectedOrder?.eoluid || ''
+      selectedOrder?.eoluid ||
+      "";
 
     if (fromOrder) {
-      setEolUid(fromOrder)
-      setEolData({})
-      setEolError('')
-      return
+      setEolUid(fromOrder);
+      setEolData({});
+      setEolError("");
+      return;
     }
 
-    const controller = new AbortController()
-    const signal = controller.signal
-    const base = (apiBase || '').replace(/\/$/, '')
-    const url = `${base}/api/trace/endoflineuid/${encodeURIComponent(uid)}`
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const base = (apiBase || "").replace(/\/$/, "");
+    const url = `${base}/api/trace/endoflineuid/${encodeURIComponent(uid)}`;
 
-    setEolLoading(true)
-    setEolError('')
-    setEolData({})
+    setEolLoading(true);
+    setEolError("");
+    setEolData({});
 
     fetch(url, { signal })
       .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const data = await res.json()
-        const row = data?.data || {}
-        setEolUid(row?.endoflineuid || '')
-        setEolData(row)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const row = data?.data || {};
+        setEolUid(row?.endoflineuid || "");
+        setEolData(row);
       })
       .catch((err) => {
-        if (err.name === 'AbortError') return
-        setEolUid('')
-        setEolError(err.message || 'Failed to fetch EOL UID')
+        if (err.name === "AbortError") return;
+        setEolUid("");
+        setEolError(err.message || "Failed to fetch EOL UID");
       })
-      .finally(() => setEolLoading(false))
+      .finally(() => setEolLoading(false));
 
-    return () => controller.abort()
-  }, [apiBase, selectedOrder])
+    return () => controller.abort();
+  }, [apiBase, selectedOrder]);
 
   const getStatusColor = (status) => {
-    const s = (status || '').toLowerCase()
-    if (s.includes('pass') || s.includes('success') || s.includes('complete')) {
-      return 'from-green-400 to-emerald-600'
+    const s = (status || "").toLowerCase();
+    if (s.includes("pass") || s.includes("success") || s.includes("complete")) {
+      return "from-green-400 to-emerald-600";
     }
-    if (s.includes('pending') || s.includes('progress')) {
-      return 'from-yellow-400 to-orange-600'
+    if (s.includes("pending") || s.includes("progress")) {
+      return "from-yellow-400 to-orange-600";
     }
-    if (s.includes('fail') || s.includes('error')) {
-      return 'from-red-400 to-rose-600'
+    if (s.includes("fail") || s.includes("error")) {
+      return "from-red-400 to-rose-600";
     }
-    return 'from-gray-400 to-gray-600'
-  }
+    return "from-gray-400 to-gray-600";
+  };
 
   return (
     <div
       className="
         relative bg-gradient-to-br from-sky-50 via-purple-50 to-sky-100 
         dark:from-gray-900 dark:via-purple-900/20 dark:to-gray-900 
-        shadow-2xl rounded-2xl p-4 
+        shadow-xl md:shadow-2xl 
+        rounded-xl md:rounded-2xl 
         border border-sky-200/50 dark:border-purple-500/20 
         overflow-hidden transition-colors duration-200
 
-        /* RESPONSIVE ADDED ONLY */
-        sm:p-5 
-        md:p-6 
-        lg:p-7
+        /* Mobile-first responsive padding */
+        p-3
+        sm:p-4 
+        md:p-5 
+        lg:p-6
+        xl:p-7
       "
     >
-      {/* Decorative blobs (unchanged) */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-sky-300/20 dark:bg-sky-500/10 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-300/10 dark:bg-pink-500/5 rounded-full blur-3xl -z-10"></div>
+      {/* Decorative blobs - scaled for mobile */}
+      <div className="absolute top-0 right-0 w-40 h-40 sm:w-56 md:w-72 sm:h-56 md:h-72 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-2xl md:blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-40 h-40 sm:w-56 md:w-72 sm:h-56 md:h-72 bg-sky-300/20 dark:bg-sky-500/10 rounded-full blur-2xl md:blur-3xl -z-10"></div>
+      <div className="absolute top-1/2 left-1/2 w-32 h-32 sm:w-48 md:w-64 sm:h-48 md:h-64 bg-pink-300/10 dark:bg-pink-500/5 rounded-full blur-2xl md:blur-3xl -z-10"></div>
 
       {/* ============================== */}
       {/* PRODUCTION DETAILS SECTION    */}
       {/* ============================== */}
 
-      <div className="border-t-2 border-sky-200/50 dark:border-purple-500/30 pt-6">
-
+      <div className="border-t border-sky-200/50 dark:border-purple-500/30 pt-3 sm:pt-4 md:pt-6">
         <h3
           className="
-            text-lg font-bold text-sky-700 dark:text-sky-300 mb-3
-            /* Responsive */
-            sm:text-xl 
-            md:text-2xl
+            text-base font-bold text-sky-700 dark:text-sky-300 
+            mb-2 sm:mb-3 md:mb-4
+            sm:text-lg 
+            md:text-xl
+            lg:text-2xl
           "
         >
           Production Details
         </h3>
 
-        {/* RESPONSIVE GRID ONLY ADDED */}
+        {/* RESPONSIVE GRID WITH MOBILE-FIRST APPROACH */}
         <div
           className="
             grid grid-cols-1 
             sm:grid-cols-2 
             lg:grid-cols-2 
-            gap-3
-            sm:gap-4
-            md:gap-5
+            gap-2
+            sm:gap-3
+            md:gap-4
+            lg:gap-5
           "
         >
           {/* UID CARD */}
-          <div className="
-            group p-5 rounded-xl 
+          <div
+            className="
+            group 
+            p-3 sm:p-4 md:p-5 
+            rounded-lg sm:rounded-xl 
             bg-gradient-to-br from-white to-sky-100
             dark:from-gray-800 dark:to-purple-900/20
             border border-sky-300/50 dark:border-purple-500/30
-            shadow-lg hover:shadow-xl hover:scale-[1.02]
+            shadow-md sm:shadow-lg 
+            hover:shadow-lg sm:hover:shadow-xl 
+            hover:scale-[1.01] sm:hover:scale-[1.02]
             transition-all duration-300
-
-            /* Responsive spacing */
-            sm:p-5 
-            md:p-6 
-          ">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-gradient-to-br from-sky-400 to-purple-500 rounded-lg shrink-0">
-                <Package className="w-5 h-5 text-white" />
+          "
+          >
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-sky-400 to-purple-500 rounded-md sm:rounded-lg shrink-0">
+                <Package className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-sky-600 dark:text-sky-400 mb-1">
+                <p className="text-[10px] sm:text-xs font-semibold text-sky-600 dark:text-sky-400 mb-0.5 sm:mb-1">
                   UID
                 </p>
-                <p className="text-sm font-bold text-gray-900 dark:text-white break-words">
-                  {selectedOrder?._uid || selectedOrder?.uid || '-'}
+                <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white break-words">
+                  {selectedOrder?._uid || selectedOrder?.uid || "-"}
                 </p>
               </div>
             </div>
           </div>
 
           {/* LINE CARD */}
-          <div className="
-            group p-5 rounded-xl 
+          <div
+            className="
+            group 
+            p-3 sm:p-4 md:p-5 
+            rounded-lg sm:rounded-xl 
             bg-gradient-to-br from-white to-purple-200
             dark:from-gray-800 dark:to-purple-900/20
             border border-purple-300/50 dark:border-purple-500/30
-            shadow-lg hover:shadow-xl hover:scale-[1.02]
+            shadow-md sm:shadow-lg 
+            hover:shadow-lg sm:hover:shadow-xl 
+            hover:scale-[1.01] sm:hover:scale-[1.02]
             transition-all duration-300
-
-            sm:p-5
-            md:p-6
-          ">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-gradient-to-br from-purple-400 to-sky-500 rounded-lg shrink-0">
-                <BarChart3 className="w-5 h-5 text-white" />
+          "
+          >
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-purple-400 to-sky-500 rounded-md sm:rounded-lg shrink-0">
+                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+                <p className="text-[10px] sm:text-xs font-semibold text-purple-600 dark:text-purple-400 mb-0.5 sm:mb-1">
                   Line
                 </p>
 
                 {eolLoading ? (
                   <div className="animate-pulse">
-                    <div className="h-4 bg-gradient-to-r from-sky-200 to-purple-200 rounded w-3/4"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-sky-200 to-purple-200 rounded w-3/4"></div>
                   </div>
                 ) : (
-                  <p className="text-sm font-bold text-gray-900 dark:text-white">
+                  <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
                     {eolData.productline ||
                       selectedOrder?._line ||
                       selectedOrder?.line ||
-                      'N/A'}
+                      "N/A"}
                   </p>
                 )}
               </div>
@@ -640,110 +1007,120 @@ export function ReportsPanel({ selectedOrder, apiBase = '', clearSelectedOrder =
           </div>
 
           {/* DATE CARD */}
-          <div className="
-            group p-5 rounded-xl 
+          <div
+            className="
+            group 
+            p-3 sm:p-4 md:p-5 
+            rounded-lg sm:rounded-xl 
             bg-gradient-to-br from-white to-sky-100
             dark:from-gray-800 dark:to-sky-900/20
             border border-sky-300/50 dark:border-sky-500/30
-            shadow-lg hover:shadow-xl hover:scale-[1.02]
+            shadow-md sm:shadow-lg 
+            hover:shadow-lg sm:hover:shadow-xl 
+            hover:scale-[1.01] sm:hover:scale-[1.02]
             transition-all duration-300
-
-            sm:p-5
-            md:p-6
-          ">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-gradient-to-br from-sky-400 to-blue-500 rounded-lg shrink-0">
-                <Calendar className="w-5 h-5 text-white" />
+          "
+          >
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-sky-400 to-blue-500 rounded-md sm:rounded-lg shrink-0">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-sky-600 dark:text-sky-400 mb-1">
+                <p className="text-[10px] sm:text-xs font-semibold text-sky-600 dark:text-sky-400 mb-0.5 sm:mb-1">
                   Date
                 </p>
-                <p className="text-sm font-bold text-gray-900 dark:text-white break-words">
+                <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white break-words">
                   {selectedOrder?._endDate ||
                     selectedOrder?.productionenddate ||
-                    '-'}
+                    "-"}
                 </p>
               </div>
             </div>
           </div>
 
           {/* STATUS CARD */}
-          <div className="
-            group p-5 rounded-xl 
+          <div
+            className="
+            group 
+            p-3 sm:p-4 md:p-5 
+            rounded-lg sm:rounded-xl 
             bg-gradient-to-br from-white to-purple-200
             dark:from-gray-800 dark:to-purple-900/20
             border border-purple-300/50 dark:border-purple-500/30
-            shadow-lg hover:shadow-xl hover:scale-[1.02]
+            shadow-md sm:shadow-lg 
+            hover:shadow-lg sm:hover:shadow-xl 
+            hover:scale-[1.01] sm:hover:scale-[1.02]
             transition-all duration-300
-
-            sm:p-5
-            md:p-6
-          ">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-gradient-to-br from-purple-400 to-sky-400 rounded-lg shrink-0">
-                <CheckCircle className="w-5 h-5 text-white" />
+          "
+          >
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-purple-400 to-sky-400 rounded-md sm:rounded-lg shrink-0">
+                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">
+                <p className="text-[10px] sm:text-xs font-semibold text-purple-600 dark:text-purple-400 mb-0.5 sm:mb-1">
                   Status
                 </p>
 
                 <span
                   className={`
-                    inline-flex px-3 py-1 rounded-full text-xs font-bold 
+                    inline-flex px-2 py-0.5 sm:px-3 sm:py-1 
+                    rounded-full 
+                    text-[10px] sm:text-xs 
+                    font-bold 
                     bg-gradient-to-r ${getStatusColor(selectedOrder?._status || selectedOrder?.status)} 
-                    text-white shadow-md
+                    text-white shadow-sm sm:shadow-md
                   `}
                 >
-                  {selectedOrder?._status ||
-                    selectedOrder?.status ||
-                    '-'}
+                  {selectedOrder?._status || selectedOrder?.status || "-"}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* END OF LINE UID CARD — FULL WIDTH ON TABLET, AUTO ON DESKTOP */}
-          <div className="
+          {/* END OF LINE UID CARD — FULL WIDTH ON ALL SCREENS */}
+          <div
+            className="
             col-span-1 
             sm:col-span-2
-            group p-5 rounded-xl 
+            group 
+            p-3 sm:p-4 md:p-5 
+            rounded-lg sm:rounded-xl 
             bg-gradient-to-br from-white to-indigo-50
             dark:from-gray-800 dark:to-indigo-900/20
             border border-indigo-300/50 dark:border-indigo-500/30
-            shadow-lg hover:shadow-xl hover:scale-[1.01]
+            shadow-md sm:shadow-lg 
+            hover:shadow-lg sm:hover:shadow-xl 
+            hover:scale-[1.005] sm:hover:scale-[1.01]
             transition-all duration-300
-
-            sm:p-5
-            md:p-6
-          ">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg shrink-0">
-                <AlertCircle className="w-5 h-5 text-white" />
+          "
+          >
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-md sm:rounded-lg shrink-0">
+                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
+                <p className="text-[10px] sm:text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-0.5 sm:mb-1">
                   End of Line UID
                 </p>
 
                 {eolLoading ? (
                   <div className="animate-pulse flex gap-2">
-                    <div className="h-4 bg-gradient-to-r from-indigo-200 to-purple-200 rounded w-1/2"></div>
-                    <div className="h-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded w-1/4"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-indigo-200 to-purple-200 rounded w-1/2"></div>
+                    <div className="h-3 sm:h-4 bg-gradient-to-r from-purple-200 to-pink-200 rounded w-1/4"></div>
                   </div>
                 ) : (
                   <>
-                    <p className="text-sm font-bold text-gray-900 dark:text-white break-words">
-                      {eolData.endoflineuid || 'N/A'}
+                    <p className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white break-words">
+                      {eolData.endoflineuid || "N/A"}
                     </p>
 
                     {eolError && (
-                      <span className="mt-1 inline-flex items-center gap-1 text-xs text-red-500 dark:text-red-400">
-                        <AlertCircle className="w-3 h-3" />
+                      <span className="mt-0.5 sm:mt-1 inline-flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs text-red-500 dark:text-red-400">
+                        <AlertCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                         {eolError}
                       </span>
                     )}
@@ -752,10 +1129,10 @@ export function ReportsPanel({ selectedOrder, apiBase = '', clearSelectedOrder =
               </div>
             </div>
           </div>
-
-        </div>{/* END GRID */}
-      </div>{/* END PRODUCTION DETAILS */}
-
+        </div>
+        {/* END GRID */}
+      </div>
+      {/* END PRODUCTION DETAILS */}
     </div>
-  )
+  );
 }

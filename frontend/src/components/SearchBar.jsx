@@ -2,7 +2,9 @@
 import React, { useState } from 'react'
 
 // Use env base when available, fallback to localhost
-const API_BASE = import.meta.env?.VITE_API_BASE || 'http://localhost:4000'
+// const API_BASE = import.meta.env?.VITE_API_BASE || 'http://localhost:4000'
+const API_BASE = import.meta.env.VITE_API_BASE;
+
 
 export function SearchBar({ onResults, onError }) {
   const [searchType, setSearchType] = useState('uid') // uid | productid | productmodelname | productvariant | productionstartdate | productionenddate | status | endoflineuid

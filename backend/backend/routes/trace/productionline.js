@@ -14,16 +14,16 @@
 //       const db = await poolPromise;
 //       connection = await db.connect();
 //       const startTime = Date.now();
-      
+
 //       const q = await connection.request().query(`
 //         SELECT productid, productionlinename, productmodelname, productvariant
 //         FROM trace.productionlines WITH (NOLOCK) -- ⚡ Performance hint
 //         OPTION (RECOMPILE, MAXDOP 4); -- ⚡ Performance hints
 //       `);
-      
+
 //       const queryTime = Date.now() - startTime;
 //       console.log(`[PRODUCTIONLINES loadAll] SQL: ${queryTime}ms, Rows: ${q.recordset.length}`);
-      
+
 //       return q.recordset || [];
 //     } catch (err) {
 //       console.error('[PRODUCTIONLINES loadAll] error', err);
@@ -45,12 +45,12 @@
 //         cache = await loadAll();
 //         lastFetch = now;
 //       }
-      
+
 //       const totalTime = Date.now() - startTime;
 //       console.log(`[PRODUCTIONLINES getAll] TOTAL: ${totalTime}ms, Cached: ${cache.length} rows`);
-      
-//       res.json({ 
-//         ok: true, 
+
+//       res.json({
+//         ok: true,
 //         data: cache,
 //         executionTime: {
 //           total: `${totalTime}ms`,
@@ -60,8 +60,8 @@
 //     } catch (err) {
 //       const totalTime = Date.now() - startTime;
 //       console.error(`[PRODUCTIONLINES getAll ERROR] TOTAL: ${totalTime}ms`, err);
-//       res.status(500).json({ 
-//         ok: false, 
+//       res.status(500).json({
+//         ok: false,
 //         error: "Server error. Please try again later.",
 //         executionTime: {
 //           total: `${totalTime}ms`
@@ -76,9 +76,9 @@
 //     try {
 //       const pid = String(req.params.productid || "").trim();
 //       if (!pid) {
-//         return res.status(400).json({ 
-//           ok: false, 
-//           error: "productid required" 
+//         return res.status(400).json({
+//           ok: false,
+//           error: "productid required"
 //         });
 //       }
 
@@ -96,8 +96,8 @@
 //       console.log(`[PRODUCTIONLINES getById] TOTAL: ${totalTime}ms, Found: ${!!row}`);
 
 //       if (!row) {
-//         return res.json({ 
-//           ok: true, 
+//         return res.json({
+//           ok: true,
 //           data: null,
 //           executionTime: {
 //             total: `${totalTime}ms`,
@@ -105,9 +105,9 @@
 //           }
 //         });
 //       }
-      
-//       res.json({ 
-//         ok: true, 
+
+//       res.json({
+//         ok: true,
 //         data: row,
 //         executionTime: {
 //           total: `${totalTime}ms`,
@@ -117,8 +117,8 @@
 //     } catch (err) {
 //       const totalTime = Date.now() - startTime;
 //       console.error(`[PRODUCTIONLINES getById ERROR] TOTAL: ${totalTime}ms`, err);
-//       res.status(500).json({ 
-//         ok: false, 
+//       res.status(500).json({
+//         ok: false,
 //         error: "Server error. Please try again later.",
 //         executionTime: {
 //           total: `${totalTime}ms`
@@ -129,8 +129,6 @@
 // }
 
 // module.exports = registerProductionLineRoutes;
-
-
 
 // routes/trace/productionline.js
 const { pool } = require("../../db");
@@ -146,18 +144,20 @@ function registerProductionLineRoutes(router) {
     const client = await pool.connect();
     try {
       const startTime = Date.now();
-      
+
       const result = await client.query(`
         SELECT productid, productionlinename, productmodelname, productvariant
         FROM public.productionlines
       `);
-      
+
       const queryTime = Date.now() - startTime;
-      console.log(`[PRODUCTIONLINES loadAll] SQL: ${queryTime}ms, Rows: ${result.rows.length}`);
-      
+      console.log(
+        `[PRODUCTIONLINES loadAll] SQL: ${queryTime}ms, Rows: ${result.rows.length}`,
+      );
+
       return result.rows || [];
     } catch (err) {
-      console.error('[PRODUCTIONLINES loadAll] error', err);
+      console.error("[PRODUCTIONLINES loadAll] error", err);
       throw err;
     } finally {
       client.release();
@@ -170,31 +170,36 @@ function registerProductionLineRoutes(router) {
     try {
       const now = Date.now();
       if (!cache || now - lastFetch > TTL_MS) {
-        console.log('[PRODUCTIONLINES] Cache refresh triggered');
+        console.log("[PRODUCTIONLINES] Cache refresh triggered");
         cache = await loadAll();
         lastFetch = now;
       }
-      
+
       const totalTime = Date.now() - startTime;
-      console.log(`[PRODUCTIONLINES getAll] TOTAL: ${totalTime}ms, Cached: ${cache.length} rows`);
-      
-      res.json({ 
-        ok: true, 
+      console.log(
+        `[PRODUCTIONLINES getAll] TOTAL: ${totalTime}ms, Cached: ${cache.length} rows`,
+      );
+
+      res.json({
+        ok: true,
         data: cache,
         executionTime: {
           total: `${totalTime}ms`,
-          cached: !!(cache && now - lastFetch < TTL_MS)
-        }
+          cached: !!(cache && now - lastFetch < TTL_MS),
+        },
       });
     } catch (err) {
       const totalTime = Date.now() - startTime;
-      console.error(`[PRODUCTIONLINES getAll ERROR] TOTAL: ${totalTime}ms`, err);
-      res.status(500).json({ 
-        ok: false, 
+      console.error(
+        `[PRODUCTIONLINES getAll ERROR] TOTAL: ${totalTime}ms`,
+        err,
+      );
+      res.status(500).json({
+        ok: false,
         error: "Server error. Please try again later.",
         executionTime: {
-          total: `${totalTime}ms`
-        }
+          total: `${totalTime}ms`,
+        },
       });
     }
   });
@@ -205,53 +210,58 @@ function registerProductionLineRoutes(router) {
     try {
       const pid = String(req.params.productid || "").trim();
       if (!pid) {
-        return res.status(400).json({ 
-          ok: false, 
-          error: "productid required" 
+        return res.status(400).json({
+          ok: false,
+          error: "productid required",
         });
       }
 
       // Ensure cache is loaded
       if (!cache) {
-        console.log('[PRODUCTIONLINES] Cache miss, loading...');
+        console.log("[PRODUCTIONLINES] Cache miss, loading...");
         cache = await loadAll();
         lastFetch = Date.now();
       }
 
       // ⚡ OPTIMIZED: Use find with exact match
-      const row = cache.find(r => String(r.productid).trim() === pid);
+      const row = cache.find((r) => String(r.productid).trim() === pid);
       const totalTime = Date.now() - startTime;
 
-      console.log(`[PRODUCTIONLINES getById] TOTAL: ${totalTime}ms, Found: ${!!row}`);
+      console.log(
+        `[PRODUCTIONLINES getById] TOTAL: ${totalTime}ms, Found: ${!!row}`,
+      );
 
       if (!row) {
-        return res.json({ 
-          ok: true, 
+        return res.json({
+          ok: true,
           data: null,
           executionTime: {
             total: `${totalTime}ms`,
-            found: false
-          }
+            found: false,
+          },
         });
       }
-      
-      res.json({ 
-        ok: true, 
+
+      res.json({
+        ok: true,
         data: row,
         executionTime: {
           total: `${totalTime}ms`,
-          found: true
-        }
+          found: true,
+        },
       });
     } catch (err) {
       const totalTime = Date.now() - startTime;
-      console.error(`[PRODUCTIONLINES getById ERROR] TOTAL: ${totalTime}ms`, err);
-      res.status(500).json({ 
-        ok: false, 
+      console.error(
+        `[PRODUCTIONLINES getById ERROR] TOTAL: ${totalTime}ms`,
+        err,
+      );
+      res.status(500).json({
+        ok: false,
         error: "Server error. Please try again later.",
         executionTime: {
-          total: `${totalTime}ms`
-        }
+          total: `${totalTime}ms`,
+        },
       });
     }
   });

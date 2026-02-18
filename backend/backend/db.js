@@ -31,7 +31,7 @@
 //   .connect()
 //   .then(async (pool) => {
 //     console.log('✅ Connected to SQL Server. Good to go');
-    
+
 //     // ✅ PRE-WARM CONNECTIONS: Establish min connections immediately
 //     console.log('🔥 Pre-warming database connections...');
 //     const warmupPromises = [];
@@ -41,10 +41,10 @@
 //           .catch(err => console.log(`⚠️ Warm-up connection ${i+1} failed:`, err.message))
 //       );
 //     }
-    
+
 //     await Promise.allSettled(warmupPromises);
 //     console.log('✅ Database connections pre-warmed and ready');
-    
+
 //     return pool;
 //   })
 //   .catch(err => {
@@ -86,11 +86,9 @@
 
 // module.exports = { sql, poolPromise };
 
-
-
 // db.js
-require('dotenv').config();
-const { Pool } = require('pg');
+require("dotenv").config();
+const { Pool } = require("pg");
 
 // PostgreSQL connection configuration
 const pool = new Pool({
@@ -106,28 +104,33 @@ const pool = new Pool({
 });
 
 // ✅ Handle pool connection cleanly
-const poolPromise = pool.connect()
+const poolPromise = pool
+  .connect()
   .then(async (client) => {
-    console.log('✅ Connected to PostgreSQL. Good to go');
-    
+    console.log("✅ Connected to PostgreSQL. Good to go");
+
     // ✅ PRE-WARM CONNECTIONS: Establish min connections immediately
-    console.log('🔥 Pre-warming database connections...');
+    console.log("🔥 Pre-warming database connections...");
     const warmupPromises = [];
-    for (let i = 0; i < 3; i++) { // Pre-warm 3 connections (of min: 5)
+    for (let i = 0; i < 3; i++) {
+      // Pre-warm 3 connections (of min: 5)
       warmupPromises.push(
-        pool.query('SELECT 1')
-          .catch(err => console.log(`⚠️ Warm-up connection ${i+1} failed:`, err.message))
+        pool
+          .query("SELECT 1")
+          .catch((err) =>
+            console.log(`⚠️ Warm-up connection ${i + 1} failed:`, err.message),
+          ),
       );
     }
-    
+
     await Promise.allSettled(warmupPromises);
-    console.log('✅ Database connections pre-warmed and ready');
-    
+    console.log("✅ Database connections pre-warmed and ready");
+
     client.release(); // Release the initial client back to pool
     return pool;
   })
-  .catch(err => {
-    console.error('❌ PostgreSQL Connection Error:', err);
+  .catch((err) => {
+    console.error("❌ PostgreSQL Connection Error:", err);
     process.exit(1); // stop server if DB fails
   });
 
@@ -136,23 +139,23 @@ let keepAliveInterval;
 poolPromise.then((pool) => {
   keepAliveInterval = setInterval(async () => {
     try {
-      await pool.query('SELECT 1');
+      await pool.query("SELECT 1");
       // console.log('🫀 Connection keep-alive successful'); // Optional: uncomment for debugging
     } catch (err) {
-      console.log('⚠️ Keep-alive failed:', err.message);
+      console.log("⚠️ Keep-alive failed:", err.message);
     }
   }, 45000); // Run every 45 seconds (less than 120s idle timeout)
 });
 
 // ✅ Cleanup on server shutdown
-process.on('SIGTERM', async () => {
+process.on("SIGTERM", async () => {
   if (keepAliveInterval) {
     clearInterval(keepAliveInterval);
   }
   await pool.end();
 });
 
-process.on('SIGINT', async () => {
+process.on("SIGINT", async () => {
   if (keepAliveInterval) {
     clearInterval(keepAliveInterval);
   }
@@ -160,8 +163,8 @@ process.on('SIGINT', async () => {
 });
 
 // ✅ Optional: handle unexpected disconnections
-pool.on('error', (err) => {
-  console.error('⚠️ PostgreSQL Pool Error:', err);
+pool.on("error", (err) => {
+  console.error("⚠️ PostgreSQL Pool Error:", err);
 });
 
 module.exports = { pool, poolPromise };
